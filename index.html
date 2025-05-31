@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Детские Смешные Анекдоты</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Comic Neue', cursive, Arial, sans-serif;
+    background: linear-gradient(135deg, #ffec99 0%, #fbd786 100%);
+    height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    user-select: none;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 3em;
+    margin: 0;
+    color: #ff6f61;
+    text-shadow: 2px 2px 6px #ff3b30;
+  }
+
+  #sticker {
+    font-size: 6em;
+    margin: 10px auto 25px auto;
+    filter: drop-shadow(4px 4px 3px rgba(255,111,97,0.7));
+  }
+
+  .buttons {
+    margin-bottom: 35px;
+  }
+
+  button {
+    font-family: 'Comic Neue', cursive, Arial, sans-serif;
+    font-size: 1.5em;
+    padding: 14px 28px;
+    margin: 0 18px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background-color: #fff;
+    color: #ff6f61;
+    box-shadow: 0 5px 15px rgba(255, 111, 97, 0.7);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  button:hover, button.active {
+    background-color: #ff6f61;
+    color: #fff;
+  }
+
+  #jokeBox {
+    max-width: 650px;
+    min-height: 120px;
+    padding: 25px 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 25px;
+    box-shadow: 0 0 25px rgba(255, 111, 97, 0.85);
+    font-size: 2em;
+    line-height: 1.3;
+    color: #bb2a1b;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    margin-bottom: 40px;
+  }
+
+  #finalGifContainer {
+    display: none; /* Скрываем гифку при загрузке */
+    justify-content: center;
+    max-width: 720px;
+  }
+
+  #finalGifContainer img {
+    width: 300px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(255, 111, 97, 0.8);
+  }
+
+  #finalMessage {
+    font-size: 1.8em;
+    color: #d1321f;
+    margin-top: 25px;
+    max-width: 700px;
+    text-align: center;
+    font-weight: 700;
+    white-space: pre-line;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Детские Смешные Анекдоты</h1>
+  <div id="sticker">😄🤣🐵🎉</div>
+</header>
+
+<div class="buttons">
+  <button id="easyBtn">Лёгкий</button>
+  <button id="mediumBtn">Средний</button>
+  <button id="hardBtn">Сложный</button>
+</div>
+
+<div id="jokeBox">Нажми на кнопку и приготовься смеяться! 😂</div>
+
+<div id="finalGifContainer">
+  <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" alt="Ржачный малыш" />
+</div>
+
+<div id="finalMessage"></div>
+
+<script>
+  const jokes = {
+    easy: [
+      "— Что сказал ноль восьмёрке? — Классный поясок!",
+      "Почему слон не прячется в холодильнике? — Потому что холодильник маленький!",
+      "Что общего у лягушки и компьютера? — Оба любят квакать!"
+    ],
+    medium: [
+      "— Почему книга боится читать газету? — Потому что газета новостями пугала!",
+      "— Что сказал карандаш ручке? — Не рискуй, я твой конкурент!",
+      "Почему у морковки нет друзей? — Потому что она слишком корневая!"
+    ],
+    hard: [
+      "— Почему программист не плачет? — Потому что у него нет чувств… кроме багов!",
+      "— Что делают коты в интернете? — Лапают мышку!",
+      "Почему компьютеру холодно? — Потому что он открывает много окон!"
+    ],
+    final: [
+      "Спасибо за смех, ты супер! 🤩",
+      "Улыбайся чаще — это бесплатно! 😄",
+      "Жизнь — лучший анекдот, смейся вместе с ней! 🎉"
+    ]
+  };
+
+  const jokeBox = document.getElementById('jokeBox');
+  const easyBtn = document.getElementById('easyBtn');
+  const mediumBtn = document.getElementById('mediumBtn');
+  const hardBtn = document.getElementById('hardBtn');
+  const finalGifContainer = document.getElementById('finalGifContainer');
+  const finalMessage = document.getElementById('finalMessage');
+
+  let currentLevel = null;
+  let jokeIndex = 0;
+  let intervalId = null;
+
+  function showJoke(text) {
+    jokeBox.style.opacity = 0;
+    setTimeout(() => {
+      jokeBox.textContent = text;
+      jokeBox.style.opacity = 1;
+    }, 600);
+  }
+
+  function startJokes(level) {
+    if(intervalId) clearInterval(intervalId);
+    finalGifContainer.style.display = 'none';  // прячем гифку при старте
+    finalMessage.textContent = '';
+    jokeBox.style.display = 'block';
+
+    currentLevel = level;
+    jokeIndex = 0;
+    showJoke(jokes[level][jokeIndex]);
+    jokeIndex++;
+
+    intervalId = setInterval(() => {
+      if (jokeIndex < jokes[level].length) {
+        showJoke(jokes[level][jokeIndex]);
+        jokeIndex++;
+      } else {
+        clearInterval(intervalId);
+        showFinal();
+      }
+    }, 5000);
+  }
+
+  function showFinal() {
+    jokeBox.style.opacity = 0;
+    setTimeout(() => {
+      jokeBox.style.display = 'none';
+      finalGifContainer.style.display = 'flex';  // показываем одну гифку после всех анекдотов
+      finalMessage.textContent = jokes.final.join("\n");
+    }, 700);
+  }
+
+  function setActiveButton(levelBtn) {
+    [easyBtn, mediumBtn, hardBtn].forEach(btn => btn.classList.remove('active'));
+    levelBtn.classList.add('active');
+  }
+
+  easyBtn.addEventListener('click', () => {
+    setActiveButton(easyBtn);
+    startJokes('easy');
+  });
+
+  mediumBtn.addEventListener('click', () => {
+    setActiveButton(mediumBtn);
+    startJokes('medium');
+  });
+
+  hardBtn.addEventListener('click', () => {
+    setActiveButton(hardBtn);
+    startJokes('hard');
+  });
+
+  jokeBox.style.opacity = 1;
+</script>
+
+</body>
+</html>
